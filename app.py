@@ -1,62 +1,73 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QLabel, QPushButton,
-    QVBoxLayout, QHBoxLayout, QStackedWidget, QComboBox
+    QVBoxLayout, QHBoxLayout, QStackedWidget, QComboBox, QLineEdit
 )
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal, QDate, QTime, QDateTime, Qt
 
 #----- TEST DATA
 TeamTestData = ["Select Team", "C Grade", "C Reserve", "D Grade", "D Reserve", "Womens"]
 PlayerTestData = ["Select Player","Will David", "David Teakle", "Angus O'loughlin", "Grant Stacomb", "Sheran Medelicot"]
 Pos = ["Pos", "P", "C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DP", "DH"]
-
+VenueTestData = ["Campbell Street Reserve", "MCG", "Minnit Park"]
 class MenuScreen(QWidget):
-    begin_gamebtn = pyqtSignal()
-    
-    def __init(self):
-        super().__init__()
+    start_scoring = pyqtSignal()
+    open_stats    = pyqtSignal()
+    quit_app      = pyqtSignal()
 
-        self.begin_gamebtn = QPushButton("Begin Game")
-        #self.begin_gamebtn.clicked.connect()
-
-
-class WindowController(QWidget):
     def __init__(self):
         super().__init__()
+        v = QVBoxLayout(self)
+        v.addWidget(QLabel("Main Menu"))
 
-        self.setWindowTitle("DCBC")
-        self.stack = QStackedWidget()
-        self.setCentralWidget(self.stack)
+        btn_start = QPushButton("Begin Game")
+        btn_stats = QPushButton("Stats")
+        btn_quit  = QPushButton("Quit")
 
-        #Screens
-        self.menu = MenuScreen()
-        self.stats = StatsScreen()
-        self.gameday = GamedayScreen()
+        v.addWidget(btn_start)
+        v.addWidget(btn_stats)
+        v.addWidget(btn_quit)
+
+        btn_start.clicked.connect(self.start_scoring.emit)
+        btn_stats.clicked.connect(self.open_stats.emit)
+        btn_quit.clicked.connect(self.quit_app.emit)
+
+
+class GamedayScreen(QWidget):
+    teamselect = pyqtSignal()
+    def __init__(self):
+        super().__init__()
         
-        self.stack.addWidget(self.stats)    
-        self.stack.addWidget(self.gameday)       
-        self.stack.addWidget(self.gameday)     
+        today = QDate.currentDate()                     
+        now   = QTime.currentTime()                     
+        stamp = QDateTime.currentDateTime()  
+        v = QVBoxLayout(self)
 
-        self.menu.begin_gamebtn.connect(self.show_gameday)
-        self.menu.open_stats.connect(self.show_stats)
-        self.menu.quit_app.connect(self.close)
+        self.date = QLineEdit()
+        self.date.setPlaceholderText(today.toString("dd-MM-yyyy"))
+        v.addWidget(self.date)
 
-        self.gameday.back.connect(self.show_menu)
-        self.stats.back.connect(self.show_menu)
+        self.venuebox = QComboBox()
+        self.venuebox.addItems(VenueTestData)
+        v.addWidget(self.venuebox)
 
-        self.show_menu()
+        submitbtn = QPushButton("Submit")
+        v.addWidget(submitbtn)
+        submitbtn.clicked.connect(self.teamselect.emit)
 
-        # Navigation helpers
-    def show_menu(self):
-        self.stack.setCurrentWidget(self.menu)
-
-    def show_gameday(self):
-        self.stack.setCurrentWidget(self.gameday)
-
-    def show_stats(self):
-        self.stack.setCurrentWidget(self.stats)
+    # def submit_game_info(self):
+    #     submitbtn.connect(self.teamselect.emit
+    #     print("Clicked")
+        
 
 
+
+
+
+
+class TeamSelectionScreen(QWidget):
+    def __init__(self):
+        super().__init__()
 
         self.outer = QVBoxLayout(self)
         # Select Team
@@ -102,6 +113,10 @@ class WindowController(QWidget):
         self.backbtn = QPushButton("Back")
         self.backbtn.clicked.connect(self.on_back)
 
+        submitbtn = QPushButton("Submit")
+        self.outer.addWidget(submitbtn)
+        #submitbtn.clicked.connect(self.scorecard.emit)
+
     def on_team_picked(self):
         #self.rows[0]["widget"].setVisible(True) 
         pass
@@ -116,6 +131,56 @@ class WindowController(QWidget):
     def on_back(self):
         pass
 
+
+class StatsScreen(QWidget):
+       def __init__(self):
+        super().__init__()
+
+class WindowController(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("DCBC")
+        self.stack = QStackedWidget()
+        self.setCentralWidget(self.stack)
+
+        #Screens
+        self.menu = MenuScreen()
+        self.stats = StatsScreen()
+        self.gameday = GamedayScreen()
+        self.teamselect = TeamSelectionScreen()
+        
+        self.stack.addWidget(self.menu)
+        self.stack.addWidget(self.stats)    
+        self.stack.addWidget(self.gameday)       
+        self.stack.addWidget(self.teamselect)     
+
+        self.menu.start_scoring.connect(self.show_gameday)
+        self.menu.open_stats.connect(self.show_stats)
+        self.menu.quit_app.connect(self.close)
+        self.gameday.teamselect.connect(self.show_teamselect)
+
+        #self.gameday.backbtn.connect(self.show_menu)
+        #self.stats.backbtn.connect(self.show_menu)
+
+        self.show_menu()
+
+        # Navigation helpers
+    def show_menu(self):
+        self.stack.setCurrentWidget(self.menu)
+
+    def show_gameday(self):
+        self.stack.setCurrentWidget(self.gameday)
+
+    def show_stats(self):
+        self.stack.setCurrentWidget(self.stats)
+
+    def show_teamselect(self):
+        self.stack.setCurrentWidget(self.teamselect)
+
+
+
+    
      
 
 def main():
