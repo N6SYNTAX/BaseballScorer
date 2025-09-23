@@ -1,48 +1,69 @@
-import sys
-from PyQt6.QtWidgets import QComboBox, QApplication, QWidget, QMainWindow, QLabel, QLineEdit,  QFormLayout, QSpinBox, QVBoxLayout, QLabel
+import sys   
+from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QLineEdit,  QFormLayout, QComboBox, QVBoxLayout
+from PyQt6.QtCore import Qt
 
-class Form(QMainWindow):
+#----- TEST DATA
+TeamTestData = ["C Grade", "C Reserve", "D Grade", "D Reserve", "Womens"]
+PlayerTestData = ["Will David", "David Teakle", "Angus O'loughlin", "Grant Stacomb", "Sheran Medelicot"]
+Pos = ["P", "C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DP", "DH"]
+
+
+class Scorecard(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.setWindowTitle("DCBC")
+        
 
-        pos = ["P", "C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DP", "DH"]
-        self.player1 = QLineEdit(placeholderText="Player")
-        self.pos1 = QComboBox()
-        self.pos1.addItems(pos)
-        self.player2 = QLineEdit(placeholderText="Player")
-        self.player3 = QLineEdit(placeholderText="Player")
-        self.player4 = QLineEdit(placeholderText="Player")
-        self.player5 = QLineEdit(placeholderText="Player")
-        self.player6 = QLineEdit(placeholderText="Player")
-        self.player7 = QLineEdit(placeholderText="Player")
-        self.player8 = QLineEdit(placeholderText="Player")
-        self.player9 = QLineEdit(placeholderText="Player")
-        self.player10 = QLineEdit(placeholderText="Player")
-        self.player11 = QLineEdit(placeholderText="Player")
-        self.player12 = QLineEdit(placeholderText="Player")
+        layout = QVBoxLayout(self)
+        #self.setLayout(layout)
 
-        self.Manager1 = QLineEdit(placeholderText="Manager")
-        self.Manager2 = QLineEdit(placeholderText="Manager")
+
+        # Select Team
+        layout.addWidget(QLabel("Team:"))
+        self.team = QComboBox()
+        self.team.addItems(TeamTestData)
+        self.team.setCurrentIndex(1)
+        layout.addWidget(self.team)
+
+        # Select Players
+        layout.addWidget(QLabel("1:"))
+        self.player1 = QComboBox()
+        self.player1.addItems(PlayerTestData)
+        self.player1.setCurrentIndex(1)
+        layout.addWidget(self.player1)
+
+        self.combo = QComboBox()
+        self.combo.addItems(Pos)
+        self.combo.setCurrentIndex(1)
+        layout.addWidget(self.combo)
+
 
 
         
-        form1 = QFormLayout(self)
-        
-
-        #layout.addRow("Batting Num","Player","Pos")
-        form1.addRow("1:", self.player1)
-        form1.addRow("2:", self.player2)
-
-        #self.show()
-        
+        self.combo = QComboBox()
+        self.combo.addItems(PlayerTestData)
+        self.combo.setCurrentIndex(1)
+        layout.addWidget(self.combo)
+        # Select Players
+        #layout.addWidget(QLabel("Team:"))
+        self.combo = QComboBox()
+        self.combo.addItems(PlayerTestData)
+        self.combo.setCurrentIndex(1)
+        layout.addWidget(self.combo)
+        # Select Players
+        #layout.addWidget(QLabel("Team:"))
+        self.combo = QComboBox()
+        self.combo.addItems(PlayerTestData)
+        self.combo.setCurrentIndex(1)
+        layout.addWidget(self.combo)
+     
 
 
 def main():
     app = QApplication(sys.argv)
-    win = Form()
-    win.setWindowTitle("DCBC")
-    win.resize(600, 400)
+    win = Scorecard()
+    win.resize(600,400)
     win.show()
     sys.exit(app.exec())
 
