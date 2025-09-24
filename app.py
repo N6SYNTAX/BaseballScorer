@@ -10,6 +10,7 @@ TeamTestData = ["Select Team", "C Grade", "C Reserve", "D Grade", "D Reserve", "
 PlayerTestData = ["Select Player","Will David", "David Teakle", "Angus O'loughlin", "Grant Stacomb", "Sheran Medelicot"]
 Pos = ["Pos", "P", "C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DP", "DH"]
 VenueTestData = ["Campbell Street Reserve", "MCG", "Minnit Park"]
+
 class MenuScreen(QWidget):
     start_scoring = pyqtSignal()
     open_stats    = pyqtSignal()
@@ -60,12 +61,8 @@ class GamedayScreen(QWidget):
     #     print("Clicked")
         
 
-
-
-
-
-
 class TeamSelectionScreen(QWidget):
+    scorecard = pyqtSignal()
     def __init__(self):
         super().__init__()
 
@@ -115,7 +112,7 @@ class TeamSelectionScreen(QWidget):
 
         submitbtn = QPushButton("Submit")
         self.outer.addWidget(submitbtn)
-        #submitbtn.clicked.connect(self.scorecard.emit)
+        submitbtn.clicked.connect(self.scorecard.emit)
 
     def on_team_picked(self):
         #self.rows[0]["widget"].setVisible(True) 
@@ -125,12 +122,49 @@ class TeamSelectionScreen(QWidget):
         pass
 
     def on_next(self):
-
         pass
 
     def on_back(self):
         pass
 
+
+class ScorecardScreen(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.outer = QVBoxLayout(self)
+
+        self.outer.addWidget(QLabel("Team:"))
+
+        
+        self.ballbtn = QPushButton("Ball")
+        self.outer.addWidget(self.ballbtn)
+        self.ballbtn.clicked.connect(self.on_ball)
+
+        self.strikebtn = QPushButton("Strike")
+        self.outer.addWidget(self.strikebtn)
+        self.strikebtn.clicked.connect(self.on_strike)
+
+        self.hitbtn = QPushButton("Hit")
+        self.outer.addWidget(self.hitbtn)
+        self.hitbtn.clicked.connect(self.on_hit)
+
+
+    def on_ball(self):
+        print("Ball")
+
+    def on_strike(self):
+        print("Strike")
+
+    def on_hit(self):
+        print("Hit")
+
+        self.fbhitbtn = QPushButton("1B")
+        self.outer.addWidget(self.fbhitbtn)
+        #self.fbhitbtn.clicked.connect(self.on_hit)
+
+        # self.hitbtn = QPushButton("2B")
+        # self.outer.addWidget(self.hitbtn)
+        # self.hitbtn.clicked.connect(self.on_hit)
 
 class StatsScreen(QWidget):
        def __init__(self):
@@ -149,16 +183,20 @@ class WindowController(QMainWindow):
         self.stats = StatsScreen()
         self.gameday = GamedayScreen()
         self.teamselect = TeamSelectionScreen()
+        self.scorecard = ScorecardScreen()
         
         self.stack.addWidget(self.menu)
         self.stack.addWidget(self.stats)    
         self.stack.addWidget(self.gameday)       
         self.stack.addWidget(self.teamselect)     
+        self.stack.addWidget(self.scorecard)  
 
         self.menu.start_scoring.connect(self.show_gameday)
         self.menu.open_stats.connect(self.show_stats)
         self.menu.quit_app.connect(self.close)
         self.gameday.teamselect.connect(self.show_teamselect)
+        self.teamselect.scorecard.connect(self.show_scorecard)
+
 
         #self.gameday.backbtn.connect(self.show_menu)
         #self.stats.backbtn.connect(self.show_menu)
@@ -178,10 +216,8 @@ class WindowController(QMainWindow):
     def show_teamselect(self):
         self.stack.setCurrentWidget(self.teamselect)
 
-
-
-    
-     
+    def show_scorecard(self):
+        self.stack.setCurrentWidget(self.scorecard)
 
 def main():
     app = QApplication(sys.argv)
