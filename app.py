@@ -48,6 +48,9 @@ class GamedayScreen(QWidget):
         self.date.setPlaceholderText(today.toString("dd-MM-yyyy"))
         v.addWidget(self.date)
 
+        # self.hometeambox = QComboBox()
+        # self.hometeambox.addItems()
+
         self.venuebox = QComboBox()
         self.venuebox.addItems(VenueTestData)
         v.addWidget(self.venuebox)
@@ -131,22 +134,84 @@ class TeamSelectionScreen(QWidget):
 class ScorecardScreen(QWidget):
     def __init__(self):
         super().__init__()
-        self.outer = QVBoxLayout(self)
+        self.outer = QHBoxLayout(self)
+        self.info = QVBoxLayout(self)
+        self.pbp = QVBoxLayout(self)
+        self.outer.addLayout(self.info)
+        self.outer.addLayout(self.pbp)
 
-        self.outer.addWidget(QLabel("Team:"))
+        currinning = "1"
+        currbat = "Top"
+        hteam = "DCBC"
+        ateam = "MMBC"
+        
+# ------ Innings Scoreboard
+        self.innouter = QVBoxLayout(self)
+        self.titleinn = QHBoxLayout(self)
+        self.homeinn = QHBoxLayout(self)
+        self.awayinn = QHBoxLayout(self)
+
+        self.titleinn.addWidget(QLabel("Inning:"))
+
+        for i in range(1,12):
+            self.titleinn.addWidget(QLabel(f"{i}"))
+
+        self.titleinn.addWidget(QLabel("Total"))
+      
 
         
+        self.homeinn.addWidget(QLabel(f"Home {hteam}"))
+        self.awayinn.addWidget(QLabel(f"Away {ateam}"))
+        self.innouter.addLayout(self.titleinn)
+        self.innouter.addLayout(self.homeinn)
+        self.innouter.addLayout(self.awayinn)
+        self.info.addLayout(self.innouter)
+
+        for i in range(0,12):
+            self.homeinn.addWidget(QLabel("0"))
+        
+        for i in range(0,12):
+            self.awayinn.addWidget(QLabel("0"))
+
+        currinning = "1"
+        currbat = "Top"
+        
+
+# ------ Control Panel
+        self.controlpanel = QHBoxLayout(self)
+        self.info.addLayout(self.controlpanel)
         self.ballbtn = QPushButton("Ball")
-        self.outer.addWidget(self.ballbtn)
+        self.controlpanel.addWidget(self.ballbtn)
         self.ballbtn.clicked.connect(self.on_ball)
 
         self.strikebtn = QPushButton("Strike")
-        self.outer.addWidget(self.strikebtn)
+        self.controlpanel.addWidget(self.strikebtn)
         self.strikebtn.clicked.connect(self.on_strike)
 
         self.hitbtn = QPushButton("Hit")
-        self.outer.addWidget(self.hitbtn)
+        self.controlpanel.addWidget(self.hitbtn)
         self.hitbtn.clicked.connect(self.on_hit)
+
+        self.kbtn = QPushButton("K")
+        self.controlpanel.addWidget(self.kbtn)
+        self.kbtn.clicked.connect(self.on_k)
+
+        self.foulbtn = QPushButton("Foul")
+        self.controlpanel.addWidget(self.foulbtn)
+        self.foulbtn.clicked.connect(self.on_f)
+
+#------- Pitch-by-Pitch
+        currpitcher = "TJ Papadimitriou"
+        currbatter = "Sean Kelly"
+        pitchtype = "Ball"
+        pitchnum = "3"
+        count = "0-3"
+        self.pbp.addWidget(QLabel("Pitch-By-Pitch"))
+        self.pbp.addWidget(QLabel(f"Innings: {currbat} {currinning}"))
+        self.pbp.addWidget(QLabel(f"{currpitcher} threw {pitchtype} {pitchnum} to {currbatter}"))
+        self.pbp.addWidget(QLabel(f"{count}"))
+
+
 
 
     def on_ball(self):
@@ -160,11 +225,19 @@ class ScorecardScreen(QWidget):
 
         self.fbhitbtn = QPushButton("1B")
         self.outer.addWidget(self.fbhitbtn)
-        #self.fbhitbtn.clicked.connect(self.on_hit)
+        self.sbhitbtn = QPushButton("2B")
+        self.outer.addWidget(self.sbhitbtn)
+        self.tbhitbtn = QPushButton("3B")
+        self.outer.addWidget(self.tbhitbtn)
+        self.hrhitbtn = QPushButton("HR")
+        self.outer.addWidget(self.hrhitbtn)
 
-        # self.hitbtn = QPushButton("2B")
-        # self.outer.addWidget(self.hitbtn)
-        # self.hitbtn.clicked.connect(self.on_hit)
+    def on_k(self):
+        print("Strikeout")    
+
+    def on_f(self):
+        print("Foul")
+    
 
 class StatsScreen(QWidget):
        def __init__(self):
@@ -201,7 +274,7 @@ class WindowController(QMainWindow):
         #self.gameday.backbtn.connect(self.show_menu)
         #self.stats.backbtn.connect(self.show_menu)
 
-        self.show_menu()
+        self.show_scorecard()
 
         # Navigation helpers
     def show_menu(self):
@@ -209,7 +282,7 @@ class WindowController(QMainWindow):
 
     def show_gameday(self):
         self.stack.setCurrentWidget(self.gameday)
-
+        
     def show_stats(self):
         self.stack.setCurrentWidget(self.stats)
 
@@ -222,7 +295,7 @@ class WindowController(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     win = WindowController()
-    win.resize(600,400)
+    win.resize(1200,800)
     win.show()
     sys.exit(app.exec())
 
