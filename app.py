@@ -150,6 +150,10 @@ class ScorecardScreen(QWidget):
         self.titleinn = QHBoxLayout(self)
         self.homeinn = QHBoxLayout(self)
         self.awayinn = QHBoxLayout(self)
+        self.innouter.addLayout(self.titleinn)
+        self.innouter.addLayout(self.homeinn)
+        self.innouter.addLayout(self.awayinn)
+        self.info.addLayout(self.innouter)
 
         self.titleinn.addWidget(QLabel("Inning:"))
 
@@ -162,10 +166,7 @@ class ScorecardScreen(QWidget):
         
         self.homeinn.addWidget(QLabel(f"Home {hteam}"))
         self.awayinn.addWidget(QLabel(f"Away {ateam}"))
-        self.innouter.addLayout(self.titleinn)
-        self.innouter.addLayout(self.homeinn)
-        self.innouter.addLayout(self.awayinn)
-        self.info.addLayout(self.innouter)
+        
 
         for i in range(0,12):
             self.homeinn.addWidget(QLabel("0"))
@@ -224,13 +225,13 @@ class ScorecardScreen(QWidget):
         print("Hit")
 
         self.fbhitbtn = QPushButton("1B")
-        self.outer.addWidget(self.fbhitbtn)
+        self.info.addWidget(self.fbhitbtn)
         self.sbhitbtn = QPushButton("2B")
-        self.outer.addWidget(self.sbhitbtn)
+        self.info.addWidget(self.sbhitbtn)
         self.tbhitbtn = QPushButton("3B")
-        self.outer.addWidget(self.tbhitbtn)
+        self.info.addWidget(self.tbhitbtn)
         self.hrhitbtn = QPushButton("HR")
-        self.outer.addWidget(self.hrhitbtn)
+        self.info.addWidget(self.hrhitbtn)
 
     def on_k(self):
         print("Strikeout")    
