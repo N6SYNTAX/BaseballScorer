@@ -275,7 +275,7 @@ class WindowController(QMainWindow):
         #self.gameday.backbtn.connect(self.show_menu)
         #self.stats.backbtn.connect(self.show_menu)
 
-        self.show_scorecard()
+        self.show_menu()
 
         # Navigation helpers
     def show_menu(self):
